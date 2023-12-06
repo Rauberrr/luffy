@@ -1,0 +1,20 @@
+// const Post = await Posts.create({
+//     name: 'James',
+//     content: 'Lorem ipsum',
+//     likes: 100,
+//     comments: [
+//         {
+//             user: 'user1',
+//             comment: 'comment1'
+//         },
+//         {
+//             user: 'user2',
+//             comment: 'comment2'
+//         }
+//     ]
+// },
+//     {
+//         include: [Comments]
+//     })
+
+// console.log(JSON.stringify(Post.toJSON(), null, 2))
