@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../../config/database'
 
-const Comments = sequelize.define('comment', {
+const OtherUser = sequelize.define('other', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -14,11 +14,11 @@ const Comments = sequelize.define('comment', {
     type: DataTypes.STRING
   },
   likes: {
-    type: DataTypes.INTEGER
+    type: DataTypes.BOOLEAN
   },
   comment: {
     type: DataTypes.STRING
   }
 })
 
-export default Comments
+export default OtherUser

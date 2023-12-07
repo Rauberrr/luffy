@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../../config/database'
-import Comments from './Comments'
+// import OtherUser from './OtherUser'
 
 const Posts = sequelize.define('post', {
   id: {
@@ -16,7 +16,7 @@ const Posts = sequelize.define('post', {
   }
 })
 
-Posts.hasMany(Comments)
-Comments.belongsTo(Posts)
+// Posts.hasMany(OtherUser)
+// OtherUser.belongsTo(Posts)
 
 export default Posts

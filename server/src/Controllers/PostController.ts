@@ -1,21 +1,14 @@
 import { type Request, type Response } from 'express'
 import Posts from '../Schema/Post'
-// import Comments from '../Schema/Comments'
-
-interface PostProps {
-  id: string
-  name: string
-  content: string
-
-}
+import OtherUser from '../Schema/OtherUser'
 
 class PostController {
   public async list (req: Request, res: Response): Promise<Response> {
     try {
-      const Post = await Posts.findAll()
+      const response = await Posts.findAll()
 
-      console.log(Post)
-      return res.status(200).json({ msg: 'Sucessfully', Post })
+      console.log(response)
+      return res.status(200).json({ msg: 'Sucessfully', response })
     } catch (error) {
       console.error(error)
       return res.status(401).json({ msg: 'Error' })
@@ -27,13 +20,13 @@ class PostController {
     // const { user, comment } = req.body.comments
 
     try {
-      const Post = await Posts.create({
+      const response = await Posts.create({
         name,
         content
       })
 
-      console.log(JSON.stringify(Post.toJSON(), null, 2))
-      return res.status(200).json({ msg: 'Sucessfully', Post })
+      console.log(JSON.stringify(response.toJSON(), null, 2))
+      return res.status(200).json({ msg: 'Sucessfully', response })
     } catch (error) {
       console.log(error)
       return res.status(401).json({ msg: 'Error' })
@@ -45,13 +38,15 @@ class PostController {
     const { id } = req.params
 
     try {
-      const Post = await Posts.update({
+      await Posts.update({
         name,
         content
       }, { where: { id } })
 
-      console.log(Post)
-      return res.status(200).json({ msg: 'Sucessfully', Post })
+      const response = await Posts.findByPk(id)
+
+      console.log(response)
+      return res.status(200).json({ msg: 'Sucessfully', response })
     } catch (error) {
       console.error(error)
       return res.status(401).json({ msg: 'Error' })
@@ -62,8 +57,11 @@ class PostController {
     const { id } = req.params
 
     try {
-      const Post = await Posts.destroy({ where: { id } })
-      return res.status(200).json({ msg: 'Sucessfully', Post })
+      const responsePost = await Posts.findByPk(id)
+      const responseOther = await OtherUser.findAll({ where: { postId: id } })
+      await Posts.destroy({ where: { id } })
+      await OtherUser.destroy({ where: { postId: id } })
+      return res.status(200).json({ msg: 'Sucessfully', responsePost, responseOther })
     } catch (error) {
       console.error(error)
       return res.status(401).json({ msg: 'Error' })
