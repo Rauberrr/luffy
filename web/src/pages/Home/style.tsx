@@ -120,16 +120,18 @@ export const Input = styled.textarea`
 
 interface ButtonsProps {
     background?: string
+    color?: string
 }
 
 export const Button = styled.button<ButtonsProps>`
     background-color: ${(props) => props.background ? props.background : 'transparent'};
     width: 15vw;
-    max-width: 120px;
+    max-width: 85px;
+    min-width: 60px;
     height: auto;
     padding: 3px;
     border-radius: 1vw;
-    color: black;
+    color: ${(props) => props.color ? props.color : 'black'};
     border: 0;
 `
 

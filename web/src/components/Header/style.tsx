@@ -36,5 +36,5 @@ interface imgProps {
 export const Img = styled.img<imgProps>`
     width: ${(props) => props.width ? props.width : '40px'};
     height:  ${(props) => props.height ? props.height : '40px'};
-    border-radius: ${(props) => props.border ? 0 : '20px' };
+    border-radius: ${(props) => props.border ? props.border : '20px' };
 `

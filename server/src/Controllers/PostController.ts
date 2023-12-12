@@ -67,6 +67,19 @@ class PostController {
       return res.status(401).json({ msg: 'Error' })
     }
   }
+
+  public async luffies (req: Request, res: Response): Promise<Response> {
+    const { nameProfile } = req.body
+
+    try {
+      const response = await Posts.findAll({ where: { name: nameProfile } })
+
+      return res.status(200).json({ msg: 'sucessfully', response })
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json({ error })
+    }
+  }
 }
 
 export default new PostController()

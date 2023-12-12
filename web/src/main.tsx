@@ -8,6 +8,7 @@ import Profile from './pages/Profile'
 import { GlobalStyle } from './components/Styles/Global.tsx'
 import { ThemeProvider } from 'styled-components'
 import { theme } from './components/Styles/Theme.tsx'
+import Login from './pages/Login/index.tsx'
 
 const routes = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const routes = createBrowserRouter([
       {
         path: '/profile',
         element: <Profile />
+      },
+      {
+        path: '/login',
+        element: <Login />
       }
     ]
   }
