@@ -1,6 +1,6 @@
 import { type Request, type Response } from 'express'
 import Posts from '../Schema/Post'
-import OtherUser from '../Schema/OtherUser'
+import Comment from '../Schema/Comment'
 
 class PostController {
   public async list (req: Request, res: Response): Promise<Response> {
@@ -16,12 +16,14 @@ class PostController {
   }
 
   public async create (req: Request, res: Response): Promise<Response> {
-    const { name, content } = req.body
+    const { userId, content } = req.body
     // const { user, comment } = req.body.comments
 
     try {
+      console.log(userId, content)
+
       const response = await Posts.create({
-        name,
+        userId,
         content
       })
 
@@ -34,16 +36,16 @@ class PostController {
   }
 
   public async update (req: Request, res: Response): Promise<Response> {
-    const { name, content } = req.body
-    const { id } = req.params
+    const { userId, content } = req.body
+    const { postId } = req.params
 
     try {
       await Posts.update({
-        name,
+        userId,
         content
-      }, { where: { id } })
+      }, { where: { postId } })
 
-      const response = await Posts.findByPk(id)
+      const response = await Posts.findByPk(postId)
 
       console.log(response)
       return res.status(200).json({ msg: 'Sucessfully', response })
@@ -54,13 +56,13 @@ class PostController {
   }
 
   public async delete (req: Request, res: Response): Promise<Response> {
-    const { id } = req.params
+    const { postId } = req.params
 
     try {
-      const responsePost = await Posts.findByPk(id)
-      const responseOther = await OtherUser.findAll({ where: { postId: id } })
-      await Posts.destroy({ where: { id } })
-      await OtherUser.destroy({ where: { postId: id } })
+      const responsePost = await Posts.findByPk(postId)
+      const responseOther = await Comment.findAll({ where: { postId } })
+      await Posts.destroy({ where: { postId } })
+      await Comment.destroy({ where: { postId } })
       return res.status(200).json({ msg: 'Sucessfully', responsePost, responseOther })
     } catch (error) {
       console.error(error)

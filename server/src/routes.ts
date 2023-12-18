@@ -2,8 +2,9 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Router } from 'express'
 import PostController from './Controllers/PostController'
-import OtherController from './Controllers/OtherController'
+import CommentController from './Controllers/CommentController'
 import UserController from './Controllers/UserController'
+import LikeController from './Controllers/LikeController'
 
 const routes = Router()
 
@@ -14,17 +15,23 @@ routes.post('/login-user', UserController.login)
 
 // PostController
 
-routes.get('/list-posts', PostController.list)
-routes.post('/list-luffies', PostController.luffies)
-routes.post('/create-post', PostController.create)
-routes.put('/update-post/:id', PostController.update)
-routes.delete('/delete-post/:id', PostController.delete)
+routes.get('/posts', PostController.list)
+// routes.post('/list-luffies', PostController.luffies)
+routes.post('/post', PostController.create)
+routes.put('/post/:postId', PostController.update)
+routes.delete('/post/:postId', PostController.delete)
 
-// OtherController
+// CommentController
 
-routes.get('/list-others', OtherController.list)
-routes.post('/insert-others/:postId', OtherController.insert)
-routes.put('/update-others/:postId/:id', OtherController.update)
-routes.delete('/delete-others/:id', OtherController.delete)
+routes.get('/comments/:postId', CommentController.list)
+routes.post('/comments/:postId', CommentController.insert)
+routes.put('/comments/:postId', CommentController.update)
+routes.delete('/comments', CommentController.delete)
+
+// LikeController
+
+routes.get('/likes/:postId', LikeController.list)
+routes.post('/likes/:postId', LikeController.insert)
+routes.delete('/likes/:postId', LikeController.delete)
 
 export default routes

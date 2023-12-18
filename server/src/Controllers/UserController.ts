@@ -10,6 +10,8 @@ class UserController {
     const { name, email, password } = req.body
 
     try {
+      console.log('AQUI ESTA O FIND: ')
+
       const find = await User.findOne({
         where: { [Op.or]: [{ name }, { email }] }
       })

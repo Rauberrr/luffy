@@ -5,6 +5,7 @@ export const DivPost = styled.div`
     width: 50vw;
     color: white;
     border-bottom: 1px solid white;
+    margin-bottom: 50px;
 
     @media screen and (max-width: 568px) {
         width: 90vw;
@@ -26,13 +27,13 @@ export const DivIcons = styled.div`
     margin: 2vh 0;
 
     div {
-        width: 100vw;
         display: flex;
-        justify-content: space-between;
     }
 
     @media screen and (max-width: 568px) {
-        
+        /* div {
+            width: 80vw;
+        } */
     }
 `
 
@@ -42,6 +43,7 @@ export const ImgIcons = styled.img`
     width: 20px;
     height: 20px;
     object-fit: contain;
+    margin: 0 2vw;
     
     &:hover {
         scale: 1.1;
@@ -52,14 +54,14 @@ export const ImgIcons = styled.img`
 `
 
 export const H2 = styled.h2`
-    font-size: ${(props) => props.theme.size.names};
+    font-size: max(20px, 1.5vw);
     margin: 0 1vw;
     color: white;
 `
 
 export const P = styled.p`
     font-family: 'Tiro Bangla';
-    font-size: ${(props) => props.theme.size.content };
+    font-size: max(16px, 1vw);
     color: white;
 `
 
@@ -138,4 +140,23 @@ export const Button = styled.button<ButtonsProps>`
 export const DivButtons = styled.div`
     display: flex;
     justify-content: end;
+`
+
+export const Ul = styled.ul`
+
+
+
+    li {
+        display: flex;
+        justify-content: center;
+        font-size: max(13px, 0.5vw);
+        background-color: #313333;
+        list-style: none;
+        /* padding: 0 0.3vw; */
+        width: 5vw;
+        max-width: 70px;
+        min-width: 50px;
+        cursor: pointer;
+        
+    }
 `

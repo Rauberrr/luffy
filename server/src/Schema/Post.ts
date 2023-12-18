@@ -1,22 +1,29 @@
 import { DataTypes } from 'sequelize'
 import sequelize from '../../config/database'
-// import OtherUser from './OtherUser'
+import Like from './Like'
+import Comment from './Comment'
+// import User from './User'
+import { v4 as uuidv4 } from 'uuid'
 
 const Posts = sequelize.define('post', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+  postId: {
+    type: DataTypes.UUID,
+    defaultValue: () => uuidv4(),
     primaryKey: true
   },
-  name: {
-    type: DataTypes.STRING
+  userId: {
+    type: DataTypes.UUID
   },
   content: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: false
   }
 })
 
-// Posts.hasMany(OtherUser)
-// OtherUser.belongsTo(Posts)
+// User.hasMany(Posts)
+Posts.hasMany(Like)
+Posts.hasMany(Comment)
+Like.belongsTo(Posts)
+Comment.belongsTo(Posts)
 
 export default Posts

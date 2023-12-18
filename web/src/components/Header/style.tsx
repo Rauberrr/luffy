@@ -7,7 +7,12 @@ export const HeaderDiv = styled.div`
     background-color: ${(props) => props.theme.color.black};
     width: 100vw;
     color: white;
-    
+    margin-bottom: min(20vw, 200px);
+
+    div {
+        display: flex;
+    }
+
     @media screen and (max-width: 568px) {
         justify-content: space-between;
         padding: 0px 10px;

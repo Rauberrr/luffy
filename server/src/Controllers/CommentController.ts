@@ -1,10 +1,13 @@
 import { type Request, type Response } from 'express'
-import OtherUser from '../Schema/OtherUser'
+import Comment from '../Schema/Comment'
+import Posts from '../Schema/Post'
 
-class OtherUserController {
+class CommentController {
   public async list (req: Request, res: Response): Promise<Response> {
+    const { postId } = req.params
+
     try {
-      const response = await OtherUser.findAll()
+      const response = await Comment.findAll({ where: { postId } })
 
       console.log(response)
       return res.status(200).json({ msg: 'sucessfully', response })
@@ -15,14 +18,19 @@ class OtherUserController {
   }
 
   public async insert (req: Request, res: Response): Promise<Response> {
-    const { user, likes, comment } = req.body
+    const { userId, comment } = req.body
     const { postId } = req.params
 
+    const findIdPost = await Posts.findByPk(postId)
+
+    if (!findIdPost) {
+      return res.status(401).json({ msg: 'Erro' })
+    }
+
     try {
-      const response = await OtherUser.create({
+      const response = await Comment.create({
         postId,
-        user,
-        likes,
+        userId,
         comment
       })
 
@@ -36,17 +44,23 @@ class OtherUserController {
   }
 
   public async update (req: Request, res: Response): Promise<Response> {
-    const { user, likes, comment } = req.body
+    const { userId, comment } = req.body
     const { postId, id } = req.params
+
+    const findIdPost = await Posts.findByPk(postId)
+
+    if (!findIdPost) {
+      return res.status(401).json({ msg: 'Erro' })
+    }
+
     try {
-      await OtherUser.update({
+      await Comment.update({
         postId,
-        user,
-        likes,
+        userId,
         comment
       }, { where: { id } })
 
-      const response = await OtherUser.findByPk(id)
+      const response = await Comment.findByPk(id)
 
       console.log(response)
       return res.status(200).json({ msg: 'sucessfully', response })
@@ -60,8 +74,8 @@ class OtherUserController {
     const { id } = req.params
 
     try {
-      const response = await OtherUser.findByPk(id)
-      await OtherUser.destroy({ where: { id } })
+      const response = await Comment.findByPk(id)
+      await Comment.destroy({ where: { id } })
 
       return res.status(200).json({ msg: 'sucessfully', response })
     } catch (error) {
@@ -71,4 +85,4 @@ class OtherUserController {
   }
 }
 
-export default new OtherUserController()
+export default new CommentController()
