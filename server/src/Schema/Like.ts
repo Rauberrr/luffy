@@ -8,6 +8,9 @@ const Like = sequelize.define('like', {
   userId: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  commentId: {
+    type: DataTypes.UUID
   }
 })
 

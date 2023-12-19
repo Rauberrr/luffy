@@ -12,7 +12,7 @@ const Header = () => {
     <HeaderDiv>
         <DivFlex> 
             <H1> Luffy </H1>
-            <Img border="0" width={'20px'} src={leaf} />
+            <Img borderRadius="0" width={'20px'} src={leaf} />
         </DivFlex>
         <div>
         {menu && (

@@ -45,7 +45,7 @@ class CommentController {
 
   public async update (req: Request, res: Response): Promise<Response> {
     const { userId, comment } = req.body
-    const { postId, id } = req.params
+    const { postId, commentId } = req.params
 
     const findIdPost = await Posts.findByPk(postId)
 
@@ -58,9 +58,9 @@ class CommentController {
         postId,
         userId,
         comment
-      }, { where: { id } })
+      }, { where: { commentId } })
 
-      const response = await Comment.findByPk(id)
+      const response = await Comment.findByPk(commentId)
 
       console.log(response)
       return res.status(200).json({ msg: 'sucessfully', response })
@@ -71,11 +71,11 @@ class CommentController {
   }
 
   public async delete (req: Request, res: Response): Promise<Response> {
-    const { id } = req.params
+    const { commentId } = req.params
 
     try {
-      const response = await Comment.findByPk(id)
-      await Comment.destroy({ where: { id } })
+      const response = await Comment.findByPk(commentId)
+      await Comment.destroy({ where: { commentId } })
 
       return res.status(200).json({ msg: 'sucessfully', response })
     } catch (error) {

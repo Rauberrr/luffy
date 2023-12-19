@@ -1,6 +1,7 @@
 import { type Request, type Response } from 'express'
 import Posts from '../Schema/Post'
 import Comment from '../Schema/Comment'
+import Like from '../Schema/Like'
 
 class PostController {
   public async list (req: Request, res: Response): Promise<Response> {
@@ -60,10 +61,11 @@ class PostController {
 
     try {
       const responsePost = await Posts.findByPk(postId)
-      const responseOther = await Comment.findAll({ where: { postId } })
+      const responseComment = await Comment.findAll({ where: { postId } })
+      const responseLikes = await Like.findAll({ where: { postId } })
       await Posts.destroy({ where: { postId } })
       await Comment.destroy({ where: { postId } })
-      return res.status(200).json({ msg: 'Sucessfully', responsePost, responseOther })
+      return res.status(200).json({ msg: 'Sucessfully', responsePost, responseComment, responseLikes })
     } catch (error) {
       console.error(error)
       return res.status(401).json({ msg: 'Error' })

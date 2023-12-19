@@ -7,12 +7,26 @@ export const DivPost = styled.div`
     border-bottom: 1px solid white;
     margin-bottom: 50px;
 
+    .buttons-comment {
+        display: flex;
+        justify-content: end;
+        margin-bottom: 10px;
+        background-color: transparent;
+    }
+
+    .comments {
+        background-color: #303030;
+        border-radius: 20px;
+    }
+
     @media screen and (max-width: 568px) {
         width: 90vw;
     }
 `
 
 export const DivImgTitle = styled.div`
+        background-color: transparent;
+
     display: flex;
     align-items: center;
     color: white;
@@ -25,9 +39,12 @@ export const DivIcons = styled.div`
     color: white;
     justify-content: space-between;
     margin: 2vh 0;
+    background-color: transparent;
+
 
     div {
         display: flex;
+        background-color: transparent;
     }
 
     @media screen and (max-width: 568px) {
@@ -44,7 +61,12 @@ export const ImgIcons = styled.img`
     height: 20px;
     object-fit: contain;
     margin: 0 2vw;
-    
+    background-color: transparent;    
+
+    div {
+        
+    }
+
     &:hover {
         scale: 1.1;
     }
@@ -54,6 +76,8 @@ export const ImgIcons = styled.img`
 `
 
 export const H2 = styled.h2`
+        background-color: transparent;
+
     font-size: max(20px, 1.5vw);
     margin: 0 1vw;
     color: white;
@@ -63,6 +87,8 @@ export const P = styled.p`
     font-family: 'Tiro Bangla';
     font-size: max(16px, 1vw);
     color: white;
+        background-color: transparent;
+
 `
 
 export const DivLuffy = styled.div`
@@ -105,19 +131,31 @@ export const DivPopup = styled.div`
     }
 `
 
-export const Input = styled.textarea`
+interface InputProps {
+    width?: string
+    height?: string
+    color?: string
+}
+
+export const Input = styled.textarea<InputProps>`
     background-color: transparent;
     border: 0;
     outline: none;
     resize: none;
     word-wrap: break-word;
     margin: 1.8vh 0 0 2vw;
-    width: 53vw;
-    height: 20vh;
+    width: ${(props) => props.width ? props.width : '53vw'};
+    height: ${(props) => props.height ? props.height : '20vh'};
+    color: ${(props) => props.color ? props.color : 'black'};
 
     &::placeholder {
         font-weight: bold;
     }
+
+    @media screen and (max-width: 568px) {
+        width: ${(props) => props.width ? '85vw' : '53vw'};
+    }
+
 `
 
 interface ButtonsProps {
@@ -144,8 +182,6 @@ export const DivButtons = styled.div`
 
 export const Ul = styled.ul`
 
-
-
     li {
         display: flex;
         justify-content: center;
@@ -159,4 +195,9 @@ export const Ul = styled.ul`
         cursor: pointer;
         
     }
+`
+
+export const DivComment = styled.div`
+    border-bottom: 1px solid white;
+    background-color: #313333;
 `

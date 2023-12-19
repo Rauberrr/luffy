@@ -25,12 +25,14 @@ routes.delete('/post/:postId', PostController.delete)
 
 routes.get('/comments/:postId', CommentController.list)
 routes.post('/comments/:postId', CommentController.insert)
-routes.put('/comments/:postId', CommentController.update)
-routes.delete('/comments', CommentController.delete)
+routes.put('/comments/:postId/:commentId', CommentController.update)
+routes.delete('/comments/:postId/:commentId', CommentController.delete)
 
 // LikeController
 
 routes.get('/likes/:postId', LikeController.list)
+routes.get('/likes/:commentId', LikeController.listComments)
+routes.post('/likes/:postId/:commentId', LikeController.insertComments)
 routes.post('/likes/:postId', LikeController.insert)
 routes.delete('/likes/:postId', LikeController.delete)
 

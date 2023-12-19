@@ -35,11 +35,11 @@ export const H1 = styled.h1`
 `
 
 interface imgProps {
-    border?: string
+    borderRadius?: string
 }
 
 export const Img = styled.img<imgProps>`
-    width: ${(props) => props.width ? props.width : '40px'};
-    height:  ${(props) => props.height ? props.height : '40px'};
-    border-radius: ${(props) => props.border ? props.border : '20px' };
+    width: max( ${(props) => props.width ? props.width : '3vw'}, 40px );
+    height: max( ${(props) => props.height ? props.height : '3vw'}, 40px );
+    border-radius: max( ${(props) => props.borderRadius ? props.borderRadius : '1.5vw'}, 20px);
 `

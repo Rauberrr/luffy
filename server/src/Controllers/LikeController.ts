@@ -22,6 +22,20 @@ class LikeController {
     }
   }
 
+  public async listComments (req: Request, res: Response): Promise<Response> {
+    const { commentId } = req.params
+
+    try {
+      const response = await Like.findAll({ where: { commentId } })
+
+      console.log(response)
+      return res.status(200).json({ msg: 'sucessfully', response })
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json({ erro: 'Error', error })
+    }
+  }
+
   public async insert (req: Request, res: Response): Promise<Response> {
     const { userId } = req.body
     const { postId } = req.params
@@ -35,7 +49,7 @@ class LikeController {
         return res.status(401).json({ msg: 'Erro' })
       }
 
-      const findUserId = await Like.findAll({ where: { userId, postId } })
+      const findUserId = await Like.findAll({ where: { userId, postId, commentId: null } })
 
       console.log('FINDUSERRRID', findUserId)
 
@@ -48,7 +62,43 @@ class LikeController {
         console.log(response)
         return res.status(200).json({ msg: 'like', response })
       } else {
-        const response = await Like.destroy({ where: { userId, postId } })
+        const response = await Like.destroy({ where: { userId, postId, commentId: null } })
+        return res.status(200).json({ msg: 'deslike', response })
+      }
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json({ error })
+    }
+  }
+
+  public async insertComments (req: Request, res: Response): Promise<Response> {
+    const { userId } = req.body
+    const { postId, commentId } = req.params
+
+    try {
+      const findIdPost = await Posts.findByPk(postId)
+
+      // console.log('findIdPost', findIdPost)
+
+      if (!findIdPost) {
+        return res.status(401).json({ msg: 'Erro' })
+      }
+
+      const findUserId = await Like.findAll({ where: { userId, postId, commentId } })
+
+      console.log('FINDUSERRRID', findUserId)
+
+      if (findUserId.length === 0) {
+        const response = await Like.create({
+          postId,
+          userId,
+          commentId
+        })
+
+        console.log(response)
+        return res.status(200).json({ msg: 'like', response })
+      } else {
+        const response = await Like.destroy({ where: { userId, postId, commentId } })
         return res.status(200).json({ msg: 'deslike', response })
       }
     } catch (error) {
