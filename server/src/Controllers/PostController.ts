@@ -3,6 +3,12 @@ import Posts from '../Schema/Post'
 import Comment from '../Schema/Comment'
 import Like from '../Schema/Like'
 
+interface likeProps {
+  userId: string
+  postId: string
+  commentId: string
+}
+
 class PostController {
   public async list (req: Request, res: Response): Promise<Response> {
     try {
@@ -10,6 +16,37 @@ class PostController {
 
       console.log(response)
       return res.status(200).json({ msg: 'Sucessfully', response })
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json({ msg: 'Error' })
+    }
+  }
+
+  public async listUserId (req: Request, res: Response): Promise<Response> {
+    const { userId } = req.params
+
+    try {
+      const response = await Posts.findAll({ where: { userId } })
+
+      console.log(response)
+      return res.status(200).json({ msg: 'Sucessfully', response })
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json({ msg: 'Error' })
+    }
+  }
+
+  public async listUserIdLikes (req: Request, res: Response): Promise<Response> {
+    const { userId } = req.params
+
+    try {
+      const responseLike = await Like.findAll({ where: { userId } })
+
+      const likedPostIds = responseLike.map((like) => like.postId)
+      const likedPosts = await Posts.findAll({ where: { postId: likedPostIds } })
+
+      console.log(likedPosts)
+      return res.status(200).json({ msg: 'Sucessfully', response: likedPosts })
     } catch (error) {
       console.error(error)
       return res.status(401).json({ msg: 'Error' })

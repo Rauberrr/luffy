@@ -16,7 +16,8 @@ routes.post('/login-user', UserController.login)
 // PostController
 
 routes.get('/posts', PostController.list)
-// routes.post('/list-luffies', PostController.luffies)
+routes.get('/posts/userId/:userId', PostController.listUserId)
+routes.get('/posts/userId/likes/:userId', PostController.listUserIdLikes)
 routes.post('/post', PostController.create)
 routes.put('/post/:postId', PostController.update)
 routes.delete('/post/:postId', PostController.delete)
@@ -31,7 +32,7 @@ routes.delete('/comments/:postId/:commentId', CommentController.delete)
 // LikeController
 
 routes.get('/likes/:postId', LikeController.list)
-routes.get('/likes/:commentId', LikeController.listComments)
+routes.get('/likes/comments/:commentId', LikeController.listComments)
 routes.post('/likes/:postId/:commentId', LikeController.insertComments)
 routes.post('/likes/:postId', LikeController.insert)
 routes.delete('/likes/:postId', LikeController.delete)

@@ -1,0 +1,254 @@
+import React from "react"
+import axiosClient from "../../api/api"
+
+interface likesProps {
+    postId: string,
+    userId: string,
+    commentId: string
+}
+
+interface commentProps {
+    postId: string
+    userId: string
+    commentId: string
+    comment: string
+}
+
+interface postProps {
+    postId: string,
+    userId: string,
+    content: string
+}
+
+interface QuantProps {
+    [key: string]: number
+}
+
+// HOME
+
+
+export const handleLike = async (postId: string, userId: string | null, setQuantLikes: React.Dispatch<React.SetStateAction<QuantProps>>, setLikesData?: React.Dispatch<React.SetStateAction<postProps[]>> | undefined) => {
+
+    try {
+
+        await axiosClient.post(`likes/${postId}`, {
+            userId,
+        })
+
+        const response = await axiosClient.get(`likes/${postId}`)
+        const responseData = response.data.response.filter((like: likesProps) => like.commentId === null)
+
+        const updatedLikesCount = responseData.length
+
+
+        setQuantLikes((accumulator) => ({
+            ...accumulator,
+            [postId]: updatedLikesCount,
+        }));
+
+        if(!setLikesData) return
+        
+
+        setLikesData((accumulator) => accumulator.filter((data) => data.postId !== postId))
+        
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const handlePost = async (e: React.MouseEvent, userId: string | null, content: string) => {
+    e.preventDefault()
+
+    try {
+
+        console.log(userId, content)
+
+        const response = await axiosClient.post('post', {
+            userId,
+            content,
+        })
+
+        console.log(response.data)
+
+        window.location.reload()
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const handleEdit = async (postId: string, contentUpdate: string) => {
+    try {
+        const response = await axiosClient.put(`post/${postId}`, {
+            content: contentUpdate
+        })
+
+        console.log(response)
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const handleDelete = async (postId: string) => {
+    try {
+        const response = await axiosClient.delete(`post/${postId}`)
+
+        console.log(response)
+
+        window.location.reload()
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+
+// Comments
+
+export const handleComment = async (postId: string, e: React.MouseEvent, commentContent: string, userId: string | null, setQuantComments: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>, setCommentsData: React.Dispatch<React.SetStateAction<commentProps[]>>, setCommentContent: React.Dispatch<React.SetStateAction<string>>) => {
+    e.preventDefault()
+
+    console.log(commentContent)
+
+    try {
+
+
+        const response = await axiosClient.post(`comments/${postId}`, {
+            userId,
+            comment: commentContent
+        })
+
+        const responseGet = await axiosClient.get(`comments/${postId}`)
+
+        const responseData = responseGet.data.response
+        const updatedCommentsCount = responseGet.data.response.length
+
+
+        setQuantComments((accumulator) => ({
+            ...accumulator,
+            [postId]: updatedCommentsCount
+        }))
+
+        setCommentsData([
+            ...responseData
+        ])
+        setCommentContent('')
+
+        console.log(response.data.response)
+
+    } catch (error) {
+        console.error(error)
+    }
+
+}
+
+export const handleViewComments = async (postId: string, setCommentsData: React.Dispatch<React.SetStateAction<commentProps[]>>, setQuantCommentsComments: React.Dispatch<React.SetStateAction<QuantProps>>) => {
+    try {
+
+        const response = await axiosClient.get(`comments/${postId}`)
+
+        console.log(response.data.response)
+        setCommentsData(response.data.response)
+
+        const LikesCommentData = await Promise.all(
+            response.data.response.map(async (data: commentProps) => {
+                const response = await axiosClient.get(`likes/comments/${data.commentId}`)
+                console.log('RESPONSE LIKESCOMMENT', response.data.response)
+                return { commentId: data.commentId, count: response.data.response.length }
+            })
+        )
+
+        const LikesCommentDataMap = LikesCommentData.reduce((accumulator, current) => {
+            return { ...accumulator, [current.commentId]: current.count }
+        }, {})
+
+        console.log('likesDATAMAP', LikesCommentDataMap)
+
+        setQuantCommentsComments(LikesCommentDataMap)
+
+    } catch (error) {
+        console.error(error)
+    }   
+}
+export const handleLikeComment = async (postId: string, commentId: string, userId: string | null, setQuantCommentsComments: React.Dispatch<React.SetStateAction<QuantProps>>) => {
+    try {
+
+        console.log('POSTID', postId)
+
+        const response = await axiosClient.post(`likes/${postId}/${commentId}`, {
+            userId
+        })
+
+        const responseData = await axiosClient.get(`likes/comments/${commentId}`)
+
+        const updatedLikesCount = responseData.data.response.length
+        console.log('responseLikesComment', response.data.response)
+
+        setQuantCommentsComments((accumulator) => ({
+            ...accumulator,
+            [commentId]: updatedLikesCount
+        }))
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const handleEditComment = async (commentId: string) => {
+    try {
+
+        // const response = await axiosClient.
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const handleDeleteComment = async (postId: string, commentId: string, setCommentsData: React.Dispatch<React.SetStateAction<commentProps[]>>, setQuantComments: React.Dispatch<React.SetStateAction<QuantProps>>) => {
+    try {
+
+        await axiosClient.delete(`comments/${postId}/${commentId}`)
+
+        // console.log(response.data.response)
+        const response = await axiosClient.get(`comments/${postId}`)
+
+        const updatedCommentsCount = response.data.response.length
+        setCommentsData(response.data.response)
+
+        setQuantComments((accumulator) => ({
+            ...accumulator,
+            [postId]: updatedCommentsCount
+        }))
+
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+// PROFILE
+
+export const handleLikesUserId = async(userId: string | null) => {
+    try {
+        
+        const response = await axiosClient.get(`posts/userId/likes/${userId}`)
+
+        console.log(response.data.response)
+        return response.data.response
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export const handlePostsUserId = async (userId: string | null) => {
+    try {
+
+        const response = await axiosClient.get(`posts/userId/${userId}`)
+
+        console.log(response.data.response)
+        return response.data.response
+    } catch (error) {
+        console.error(error)
+    }
+}
