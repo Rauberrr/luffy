@@ -1,4 +1,4 @@
-import React from "react"
+import React, { SetStateAction } from "react"
 import axiosClient from "../../api/api"
 
 interface likesProps {
@@ -31,12 +31,14 @@ export const handleLike = async (postId: string, userId: string | null, setQuant
 
     try {
 
-        await axiosClient.post(`likes/${postId}`, {
+        const MethodPost = await axiosClient.post(`likes/${postId}`, {
             userId,
         })
 
         const response = await axiosClient.get(`likes/${postId}`)
         const responseData = response.data.response.filter((like: likesProps) => like.commentId === null)
+
+        const responseListPosts = (await axiosClient.get(`posts/${postId}`)).data.response
 
         const updatedLikesCount = responseData.length
 
@@ -46,10 +48,19 @@ export const handleLike = async (postId: string, userId: string | null, setQuant
             [postId]: updatedLikesCount,
         }));
 
-        if(!setLikesData) return
-        
+        console.log('RESPONSE LIST POSTS', responseListPosts)
 
-        setLikesData((accumulator) => accumulator.filter((data) => data.postId !== postId))
+        if(!setLikesData) return
+
+        if(MethodPost.data.response.length === 0) {
+            setLikesData((accumulator) => accumulator.filter((data) => data.postId !== postId))
+            return
+        }else {
+            setLikesData((accumulator) => [
+                ...accumulator, responseListPosts
+            ])
+            return
+        }
         
 
     } catch (error) {
@@ -57,7 +68,7 @@ export const handleLike = async (postId: string, userId: string | null, setQuant
     }
 }
 
-export const handlePost = async (e: React.MouseEvent, userId: string | null, content: string) => {
+export const handlePost = async (e: React.MouseEvent, userId: string | null, content: string, setPostsData: React.Dispatch<SetStateAction<postProps[]>>, setPopup: React.Dispatch<SetStateAction<boolean>>, setContent: React.Dispatch<SetStateAction<string>>) => {
     e.preventDefault()
 
     try {
@@ -71,7 +82,13 @@ export const handlePost = async (e: React.MouseEvent, userId: string | null, con
 
         console.log(response.data)
 
-        window.location.reload()
+        setPostsData((accumulator) => [
+            ...accumulator, 
+            response.data.response
+        ])
+
+        setPopup(false)
+        setContent('')
 
     } catch (error) {
         console.error(error)
@@ -91,13 +108,16 @@ export const handleEdit = async (postId: string, contentUpdate: string) => {
     }
 }
 
-export const handleDelete = async (postId: string) => {
+export const handleDelete = async (postId: string, setPostsData?: React.Dispatch<SetStateAction<postProps[]>> | undefined) => {
     try {
         const response = await axiosClient.delete(`post/${postId}`)
 
         console.log(response)
 
-        window.location.reload()
+        if(!setPostsData) return
+
+        setPostsData((accumulator) => accumulator.filter((data) => data.postId !== postId))
+
     } catch (error) {
         console.error(error)
     }

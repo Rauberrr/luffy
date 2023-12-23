@@ -21,7 +21,7 @@ const Home = () => {
   const [QuantComments, setQuantComments] = useState<QuantProps>({})
   const [QuantCommentsComments, setQuantCommentsComments] = useState<QuantProps>({})
   
-  const [postsData, setPostsData] = useState([])
+  const [postsData, setPostsData] = useState<postProps[]>([])
   const [commentsData, setCommentsData] = useState<commentProps[]>([])
 
   const [content, setContent] = useState('')
@@ -146,7 +146,7 @@ const Home = () => {
                     <div>
                       <Ul>
                         <li onClick={() => handleEdit(post.postId, contentUpdate)}>Edit</li>
-                        <li onClick={() => handleDelete(post.postId)}>Delete</li>
+                        <li onClick={() => handleDelete(post.postId, setPostsData)}>Delete</li>
                       </Ul>
                     </div>
                   )}
@@ -177,7 +177,12 @@ const Home = () => {
                 </DivImgTitle>
                 <Input color="white" width="50vw" height="10vw" value={commentContent} onChange={(e) => setCommentContent(e.target.value)} placeholder="Write you comment here." /> 
                 <div className="buttons-comment">
-                  <Button color="white" background="#129FCC" onClick={(e) => handleComment(post.postId, e, commentContent, userId, setQuantComments, setCommentsData, setCommentContent)}> Comment </Button>
+                  <Button color="white" background="#129FCC" onClick={(e) =>  {
+                    handleComment(post.postId, e, commentContent, userId, setQuantComments, setCommentsData, setCommentContent)
+                    setCommentContent('')
+                  }
+                  }
+                  > Comment </Button>
                 </div>
                 </div>
                 {commentsData.map((comment: commentProps) => (
@@ -192,7 +197,9 @@ const Home = () => {
                         <ImgIcons
                           src={like}
                           alt="icon"
-                          onClick={() => handleLikeComment(post.postId, comment.commentId, userId, setQuantCommentsComments)}
+                          onClick={() => 
+                            handleLikeComment(post.postId, comment.commentId, userId, setQuantCommentsComments)
+                          }
                         />
                         <P> {QuantCommentsComments[comment.commentId] || 0} </P>
                       </div>
@@ -243,7 +250,7 @@ const Home = () => {
 
           <DivButtons>
             <Button > Save Draft </Button>
-            <Button background="#129FCC" onClick={(e) => handlePost(e, userId, content)} > Post Now </Button>
+            <Button background="#129FCC" onClick={(e) => handlePost(e, userId, content, setPostsData, setPopup, setContent)} > Post Now </Button>
           </DivButtons>
         </DivPopup>
 

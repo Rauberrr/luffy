@@ -16,6 +16,7 @@ routes.post('/login-user', UserController.login)
 // PostController
 
 routes.get('/posts', PostController.list)
+routes.get('/posts/:postId', PostController.listId)
 routes.get('/posts/userId/:userId', PostController.listUserId)
 routes.get('/posts/userId/likes/:userId', PostController.listUserIdLikes)
 routes.post('/post', PostController.create)

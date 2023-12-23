@@ -22,6 +22,20 @@ class PostController {
     }
   }
 
+  public async listId (req: Request, res: Response): Promise<Response> {
+    const { postId } = req.params
+
+    try {
+      const response = await Posts.findByPk(postId)
+
+      console.log(response)
+      return res.status(200).json({ msg: 'Sucessfully', response })
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json({ msg: 'Error' })
+    }
+  }
+
   public async listUserId (req: Request, res: Response): Promise<Response> {
     const { userId } = req.params
 

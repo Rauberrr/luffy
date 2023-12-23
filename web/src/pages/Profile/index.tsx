@@ -6,7 +6,7 @@ import comments from '../../assets/img/comments.png'
 import dots from '../../assets/img/dots.png'
 import share from '../../assets/img/share.png'
 import axiosClient from '../../api/api'
-import { useCallback, useEffect, useState } from 'react'
+import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
 import { handleComment, handleDelete, handleDeleteComment, handleEdit, handleEditComment, handleLike, handleLikeComment, handleLikesUserId, handlePostsUserId, handleViewComments } from '../../components/FetchApi'
 import { Button, DivComment, DivIcons, DivImgTitle, DivPost, H2, ImgIcons, Input, P, Ul } from '../Home/style'
 
@@ -24,7 +24,6 @@ const Profile = () => {
   const [likesData, setLikesData] = useState<postProps[]>([])
   const [commentsData, setCommentsData] = useState<commentProps[]>([])
 
-  const [commentContent, setCommentContent] = useState('')
 
 
   interface QuantProps {
@@ -111,7 +110,11 @@ const Profile = () => {
     comment: string
   }
 
-  const Datas = ({ data } : { data: postProps[] }) => {
+
+  const Datas = ({ data} : { data: postProps[] }) => {
+
+    const [commentContent, setCommentContent] = useState('')
+
     return (
       <div>
       { data.map((post: postProps) => (
@@ -135,7 +138,6 @@ const Profile = () => {
                     alt="icon"
                     onClick={async () => {
                       await handleViewComments(post.postId, setCommentsData, setQuantCommentsComments),
-                        // await handleCommentsCount(),
                         setComment((accumulator) => ({
                           [post.postId]: !accumulator[post.postId]
                         }))
@@ -179,7 +181,7 @@ const Profile = () => {
                       <Img width={'2vw'} height={'2vw'} style={{ borderRadius: '1vw' }} src="https://upload.wikimedia.org/wikipedia/commons/4/43/Foto_Perfil.jpg" alt="Profile" />
                       <H2> User </H2>
                     </DivImgTitle>
-                    <Input color="white" width="50vw" height="10vw" value={commentContent} onChange={(e) => setCommentContent(e.target.value)} placeholder="Write you comment here." />
+                  <Input color="white" width="50vw" height="10vw" onChange={(e) => setCommentContent(e.target.value)} placeholder="Write you comment here." />
                     <div className="buttons-comment">
                       <Button color="white" background="#129FCC" onClick={(e) => handleComment(post.postId, e, commentContent, userId, setQuantComments, setCommentsData, setCommentContent)}> Comment </Button>
                     </div>
@@ -196,7 +198,11 @@ const Profile = () => {
                           <ImgIcons
                             src={like}
                             alt="icon"
-                            onClick={() => handleLikeComment(post.postId, comment.commentId, userId, setQuantCommentsComments)}
+                            onClick={() => {
+                              handleLikeComment(post.postId, comment.commentId, userId, setQuantCommentsComments),
+                              setCommentContent('')
+                            }
+                            }
                           />
                           <P> {QuantCommentsComments[comment.commentId] || 0} </P>
                         </div>

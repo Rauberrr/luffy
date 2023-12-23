@@ -62,8 +62,8 @@ class LikeController {
         console.log(response)
         return res.status(200).json({ msg: 'like', response })
       } else {
-        const response = await Like.destroy({ where: { userId, postId, commentId: null } })
-        return res.status(200).json({ msg: 'deslike', response })
+        await Like.destroy({ where: { userId, postId, commentId: null } })
+        return res.status(200).json({ msg: 'deslike', response: [] })
       }
     } catch (error) {
       console.error(error)
