@@ -3,6 +3,12 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const sequelize = new Sequelize(process.env.DATABASE)
+let sequelize: Sequelize
+
+if (process.env.DATABASE != null) {
+  sequelize = new Sequelize(process.env.DATABASE)
+} else {
+  throw new Error('Variável de ambiente DATABASE não definida')
+}
 
 export default sequelize
