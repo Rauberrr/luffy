@@ -2,6 +2,7 @@ import { type Request, type Response } from 'express'
 import Posts from '../Schema/Post'
 import Comment from '../Schema/Comment'
 import Like from '../Schema/Like'
+import { type Model } from 'sequelize'
 
 class PostController {
   public async list (req: Request, res: Response): Promise<Response> {
@@ -50,7 +51,7 @@ class PostController {
     try {
       const responseLike = await Like.findAll({ where: { userId } })
 
-      const likedPostIds = responseLike.map((like) => like.postId)
+      const likedPostIds: string[] = responseLike.map((like: Model<any, any>) => like.getDataValue('postId'))
       const likedPosts = await Posts.findAll({ where: { postId: likedPostIds } })
 
       console.log(likedPosts)
