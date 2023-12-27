@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize'
-import sequelize from '../../config/database'
+import sequelize from '../config/database'
 import { v4 as uuidv4 } from 'uuid'
 
 const User = sequelize.define('user', {

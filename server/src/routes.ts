@@ -8,7 +8,7 @@ import LikeController from './Controllers/LikeController'
 
 const routes = Router()
 
-// UserController
+// UserControllers
 
 routes.post('/create-user', UserController.create)
 routes.post('/login-user', UserController.login)

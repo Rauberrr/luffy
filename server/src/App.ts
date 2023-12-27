@@ -1,8 +1,11 @@
 import e, { type Application } from 'express'
 import cors from 'cors'
 import routes from './routes'
-import sequelize from '../config/database'
+import sequelize from './config/database'
 import bodyParser from 'body-parser'
+import User from './Schema/User'
+import Like from './Schema/Like'
+import Comment from './Schema/Comment'
 
 export default class App {
   public app: Application
@@ -35,8 +38,14 @@ export default class App {
 
   private async db (): Promise<void> {
     try {
-      await sequelize.sync()
+      const response = Promise.all([
+        await sequelize.sync({ force: true }),
+        await User.sync({ force: true }),
+        await Like.sync({ force: true }),
+        await Comment.sync({ force: true })
+      ])
 
+      console.log(response)
       console.log('Modelos sincronizados com o banco de dados.')
     } catch (error) {
       console.error('Erro ao sincronizar modelos:', error)

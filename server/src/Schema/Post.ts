@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize'
-import sequelize from '../../config/database'
+import sequelize from '../config/database'
 // import User from './User'
 import { v4 as uuidv4 } from 'uuid'
 
