@@ -8,9 +8,9 @@ interface UserProps {
 class UserService {
   public async login (email: string, password: string): Promise<UserProps | null> {
     try {
-      const responseUser = await User.findOne({ where: { email, password } })
+      await User.findOne({ where: { email, password } })
 
-      return responseUser
+      return { email, password }
     } catch (error) {
       console.error(error)
       return null

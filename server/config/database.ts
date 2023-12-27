@@ -3,8 +3,6 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const database: string = process.env.DATABASE
-
-const sequelize = new Sequelize(database)
+const sequelize = new Sequelize(process.env.DATABASE)
 
 export default sequelize
