@@ -45,7 +45,7 @@ class UserController {
 
       const response = await User.findOne({ where: { userId } })
 
-      if (!response) {
+      if (response === null) {
         return res.status(401).json({ mgs: 'user nao encontrado' })
       }
 

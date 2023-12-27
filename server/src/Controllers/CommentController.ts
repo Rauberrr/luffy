@@ -2,6 +2,12 @@ import { type Request, type Response } from 'express'
 import Comment from '../Schema/Comment'
 import Posts from '../Schema/Post'
 
+interface postProps {
+  postId: string
+  userId: string
+  content: string
+}
+
 class CommentController {
   public async list (req: Request, res: Response): Promise<Response> {
     const { postId } = req.params
@@ -23,7 +29,7 @@ class CommentController {
 
     const findIdPost = await Posts.findByPk(postId)
 
-    if (!findIdPost) {
+    if (findIdPost === null) {
       return res.status(401).json({ msg: 'Erro' })
     }
 
@@ -47,9 +53,9 @@ class CommentController {
     const { userId, comment } = req.body
     const { postId, commentId } = req.params
 
-    const findIdPost = await Posts.findByPk(postId)
+    const findIdPost: postProps[] | null = await Posts.findByPk(postId)
 
-    if (!findIdPost) {
+    if (findIdPost === null) {
       return res.status(401).json({ msg: 'Erro' })
     }
 

@@ -2,11 +2,6 @@ import { type Request, type Response } from 'express'
 import Like from '../Schema/Like'
 import Posts from '../Schema/Post'
 
-interface likesProps {
-  userId: number
-  postId: number
-}
-
 class LikeController {
   public async listPostId (req: Request, res: Response): Promise<Response> {
     const { postId } = req.params
@@ -59,7 +54,7 @@ class LikeController {
 
       // console.log('findIdPost', findIdPost)
 
-      if (!findIdPost) {
+      if (findIdPost === null) {
         return res.status(401).json({ msg: 'Erro' })
       }
 
@@ -94,7 +89,7 @@ class LikeController {
 
       // console.log('findIdPost', findIdPost)
 
-      if (!findIdPost) {
+      if (findIdPost === null) {
         return res.status(401).json({ msg: 'Erro' })
       }
 

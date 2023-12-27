@@ -25,7 +25,7 @@ const Profile = () => {
   const [commentsData, setCommentsData] = useState<commentProps[]>([])
 
   const [contentUpdate, setContentUpdate] = useState('')
-
+  setContentUpdate('setContentUpdateData')
 
 
   interface QuantProps {
@@ -38,9 +38,9 @@ const Profile = () => {
     commentId: string
   }
 
-  const userId = localStorage.getItem('userId')
-
+  
   const data = useCallback(async () => {
+    const userId = localStorage.getItem('userId')
     try {
 
       const responsePosts = await handlePostsUserId(userId)

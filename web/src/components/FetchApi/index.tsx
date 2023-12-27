@@ -217,7 +217,7 @@ export const handleLikeComment = async (postId: string, commentId: string, userI
 
 export const handleEditComment = async (commentId: string) => {
     try {
-
+        console.log(commentId)
         // const response = await axiosClient.
 
     } catch (error) {

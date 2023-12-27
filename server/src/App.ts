@@ -12,7 +12,7 @@ export default class App {
 
     this.middlewares()
     this.router()
-    this.db()
+    void this.db()
   }
 
   public list (port: number): void {

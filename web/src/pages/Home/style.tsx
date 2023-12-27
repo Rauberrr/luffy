@@ -75,6 +75,7 @@ export const ImgIcons = styled.img`
     } */
 `
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const H2 = styled.h2`
         background-color: transparent;
 
@@ -83,6 +84,7 @@ export const H2 = styled.h2`
     color: white;
 `
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const P = styled.p`
     font-family: 'Tiro Bangla';
     font-size: max(16px, 1vw);

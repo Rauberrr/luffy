@@ -3,12 +3,6 @@ import Posts from '../Schema/Post'
 import Comment from '../Schema/Comment'
 import Like from '../Schema/Like'
 
-interface likeProps {
-  userId: string
-  postId: string
-  commentId: string
-}
-
 class PostController {
   public async list (req: Request, res: Response): Promise<Response> {
     try {
@@ -122,7 +116,6 @@ class PostController {
       return res.status(401).json({ msg: 'Error' })
     }
   }
-
-
+}
 
 export default new PostController()
