@@ -35,7 +35,7 @@ export const handleLike = async (postId: string, userId: string | null, setQuant
             userId,
         })
 
-        const response = await axiosClient.get(`likes/${postId}`)
+        const response = await axiosClient.get(`likes/postId/${postId}`)
         const responseData = response.data.response.filter((like: likesProps) => like.commentId === null)
 
         const responseListPosts = (await axiosClient.get(`posts/${postId}`)).data.response
@@ -254,7 +254,7 @@ export const handleLikesUserId = async(userId: string | null) => {
         
         const response = await axiosClient.get(`posts/userId/likes/${userId}`)
 
-        console.log(response.data.response)
+        console.log('handleLikesuserId', response.data.response)
         return response.data.response
     } catch (error) {
         console.error(error)

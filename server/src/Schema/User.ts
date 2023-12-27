@@ -10,13 +10,22 @@ const User = sequelize.define('user', {
     allowNull: false
   },
   name: {
-    type: DataTypes.STRING(10)
+    type: DataTypes.STRING(10),
+    allowNull: false
+
   },
   email: {
-    type: DataTypes.STRING(30)
+    type: DataTypes.STRING(30),
+    allowNull: false
+
   },
   password: {
-    type: DataTypes.STRING(30)
+    type: DataTypes.STRING(30),
+    allowNull: false
+
+  },
+  img: {
+    type: DataTypes.BLOB('long')
   }
 })
 

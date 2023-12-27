@@ -35,6 +35,27 @@ class UserController {
     }
   }
 
+  public async uploadImg (req: Request, res: Response): Promise<Response> {
+    const { img, userId } = req.body
+
+    try {
+      await User.update({
+        img
+      }, { where: { userId } })
+
+      const response = await User.findOne({ where: { userId } })
+
+      if (!response) {
+        return res.status(401).json({ mgs: 'user nao encontrado' })
+      }
+
+      return res.status(200).json({ msg: 'sucessfully', response })
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json({ error })
+    }
+  }
+
   public async login (req: Request, res: Response): Promise<Response> {
     const { email, password } = req.body
 

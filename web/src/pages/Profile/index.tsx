@@ -6,7 +6,7 @@ import comments from '../../assets/img/comments.png'
 import dots from '../../assets/img/dots.png'
 import share from '../../assets/img/share.png'
 import axiosClient from '../../api/api'
-import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { handleComment, handleDelete, handleDeleteComment, handleEdit, handleEditComment, handleLike, handleLikeComment, handleLikesUserId, handlePostsUserId, handleViewComments } from '../../components/FetchApi'
 import { Button, DivComment, DivIcons, DivImgTitle, DivPost, H2, ImgIcons, Input, P, Ul } from '../Home/style'
 
@@ -23,6 +23,8 @@ const Profile = () => {
   const [postsData, setPostsData] = useState([])
   const [likesData, setLikesData] = useState<postProps[]>([])
   const [commentsData, setCommentsData] = useState<commentProps[]>([])
+
+  const [contentUpdate, setContentUpdate] = useState('')
 
 
 
@@ -49,43 +51,7 @@ const Profile = () => {
       setPostsData(responsePosts)
       setLikesData(responseLikes)
 
-      const LikesCountData = await Promise.all(
-        responsePosts.map(async (data: postProps) => {
-          try {
-
-            const response = await axiosClient.get(`likes/${data.postId}`)
-            const responseData = response.data.response.filter((likes: likesProps) => likes.commentId === null)
-            return { postId: data.postId, likesCount: responseData.length }
-          } catch (error) {
-            console.error(error)
-            return { postId: data.postId, likesCount: 0 }
-          }
-        })
-      )
-
-      const LikesCountMapData = LikesCountData.reduce((accumulator, current) => {
-        return { ...accumulator, [current.postId]: current.likesCount }
-      }, {})
-
-      const CommentsCOuntData = await Promise.all(
-        responsePosts.map(async (data: postProps) => {
-          try {
-            const response = await axiosClient.get(`comments/${data.postId}`)
-            return { postId: data.postId, comments: response.data.response.length }
-          } catch (error) {
-            console.error(error)
-            return { postId: data.postId, comments: 0 }
-          }
-        })
-      )
-
-      const CommentsCountDataMap = CommentsCOuntData.reduce((accumulator, current) => {
-        return { ...accumulator, [current.postId]: current.comments }
-      }, {})
-
-
-      setQuantLikes(LikesCountMapData)
-      setQuantComments(CommentsCountDataMap)
+      
 
     } catch (error) {
       console.error(error)
@@ -110,8 +76,40 @@ const Profile = () => {
     comment: string
   }
 
+  
+    const [image, setImage] = useState(null);
 
-  const Datas = ({ data} : { data: postProps[] }) => {
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    console.log('FILE', file)
+    console.log('READER', reader)
+
+
+    reader.onloadend = async() => {
+      // Armazenar temporariamente a imagem no estado
+      setImage(reader.result);
+      
+      const response = await axiosClient.put(`userId/img`, {
+        img: reader.result,
+        userId
+      })
+
+      console.log('RESPONSE IMG', response)
+      console.log('READER RESULT', reader.result)
+
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+
+    }
+  };
+  
+
+
+  const Datas = ({ data, likesOrLuffies }: { data: postProps[], likesOrLuffies: boolean, setLikesOrLuffies: React.Dispatch<SetStateAction<boolean>> }) => {
 
     const [commentContent, setCommentContent] = useState('')
 
@@ -121,6 +119,8 @@ const Profile = () => {
           <DivPost key={post.postId}>
             <div>
               <DivImgTitle>
+              
+             
                 <Img src="https://www.hubspot.com/hs-fs/hubfs/media/fotodeperfil.jpeg?width=610&height=406&name=fotodeperfil.jpeg" alt="Profile" />
                 <H2> Opa </H2>
               </DivImgTitle>
@@ -132,7 +132,9 @@ const Profile = () => {
                     alt="icon"
                     onClick={() => handleLike(post.postId, userId, setQuantLikes, setLikesData)}
                   />
-                  <p> {QuantLikes[post.postId] || 0} </p>
+                  {likesOrLuffies === false && (
+                    <p> {QuantLikes[post.postId] || 0} </p>
+                  )}
                   <ImgIcons
                     src={comments}
                     alt="icon"
@@ -246,10 +248,52 @@ const Profile = () => {
     )
   }
 
+  const handlePullLuffies = async() => {
+    const LikesCountData = await Promise.all(
+      postsData.map(async (data: postProps) => {
+        try {
+
+          const response = await axiosClient.get(`likes/postId/${data.postId}`)
+          const responseData = response.data.response.filter((likes: likesProps) => likes.commentId === null && likes.userId === data.userId)
+          return { postId: data.postId, likesCount: responseData.length }
+        } catch (error) {
+          console.error(error)
+          return { postId: data.postId, likesCount: 0 }
+        }
+      })
+    )
+
+    const LikesCountMapData = LikesCountData.reduce((accumulator, current) => {
+      return { ...accumulator, [current.postId]: current.likesCount }
+    }, {})
+
+    const CommentsCOuntData = await Promise.all(
+      postsData.map(async (data: postProps) => {
+        try {
+          const response = await axiosClient.get(`comments/${data.postId}`)
+          return { postId: data.postId, comments: response.data.response.length }
+        } catch (error) {
+          console.error(error)
+          return { postId: data.postId, comments: 0 }
+        }
+      })
+    )
+
+    const CommentsCountDataMap = CommentsCOuntData.reduce((accumulator, current) => {
+      return { ...accumulator, [current.postId]: current.comments }
+    }, {})
+
+
+    setQuantLikes(LikesCountMapData)
+    setQuantComments(CommentsCountDataMap)
+  }
+
   return (
     <>
     <DivProfile>
       <div className='img'>
+          <input type="file" onChange={handleImageUpload} />
+          {image && <img src={image} alt="Uploaded" style={{ maxWidth: '300px' }} />}
         <ImgProfile src='https://www.hubspot.com/hs-fs/hubfs/media/fotodeperfil.jpeg?width=610&height=406&name=fotodeperfil.jpeg' />
         <p> Edit Profile </p>
       </div>
@@ -265,15 +309,19 @@ const Profile = () => {
         Likes
       </div>
       <div>
-        <Img src={luffy} borderRadius='0' alt="" onClick={() => setLikesOrLuffies(false)} />
+        <Img src={luffy} borderRadius='0' alt="" onClick={() => {
+          handlePullLuffies(),
+          setLikesOrLuffies(false)
+        }
+          } />
         Luffies
       </div>
     </DivLikeLuffy>
       { likesOrLuffies ? (
-        <Datas data={likesData} />
+        <Datas data={likesData} likesOrLuffies={likesOrLuffies} />
       )
       : (
-        <Datas data={postsData} />
+        <Datas data={postsData} likesOrLuffies={likesOrLuffies} />
       )
       }
 

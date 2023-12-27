@@ -8,11 +8,25 @@ interface likesProps {
 }
 
 class LikeController {
-  public async list (req: Request, res: Response): Promise<Response> {
+  public async listPostId (req: Request, res: Response): Promise<Response> {
     const { postId } = req.params
 
     try {
       const response = await Like.findAll({ where: { postId } })
+
+      console.log(response)
+      return res.status(200).json({ msg: 'sucessfully', response })
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json({ erro: 'Error', error })
+    }
+  }
+
+  public async listUserId (req: Request, res: Response): Promise<Response> {
+    const { userId } = req.params
+
+    try {
+      const response = await Like.findAll({ where: { userId } })
 
       console.log(response)
       return res.status(200).json({ msg: 'sucessfully', response })

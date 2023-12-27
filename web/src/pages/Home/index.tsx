@@ -25,6 +25,7 @@ const Home = () => {
   const [commentsData, setCommentsData] = useState<commentProps[]>([])
 
   const [content, setContent] = useState('')
+  const [contentUpdate, setContentUpdate] = useState('')
   const [commentContent, setCommentContent] = useState('')
 
   
@@ -50,7 +51,7 @@ const Home = () => {
         responsePosts.data.response.map(async(data: postProps) => {
           try {
 
-            const response = await axiosClient.get(`likes/${data.postId}`)
+            const response = await axiosClient.get(`likes/postId/${data.postId}`)
             const responseData = response.data.response.filter((likes: likesProps) => likes.commentId === null)
             return { postId: data.postId, likesCount: responseData.length }
           } catch(error) {

@@ -2,6 +2,7 @@ import e, { type Application } from 'express'
 import cors from 'cors'
 import routes from './routes'
 import sequelize from '../config/database'
+import bodyParser from 'body-parser'
 
 export default class App {
   public app: Application
@@ -23,6 +24,8 @@ export default class App {
   private middlewares (): void {
     this.app.use(e.json())
     this.app.use(e.urlencoded({ extended: true }))
+    this.app.use(bodyParser.json({ limit: '50mb' }))
+    this.app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
     this.app.use(cors())
   }
 

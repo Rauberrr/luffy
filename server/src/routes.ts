@@ -12,6 +12,7 @@ const routes = Router()
 
 routes.post('/create-user', UserController.create)
 routes.post('/login-user', UserController.login)
+routes.put('/userId/img', UserController.uploadImg)
 
 // PostController
 
@@ -32,7 +33,8 @@ routes.delete('/comments/:postId/:commentId', CommentController.delete)
 
 // LikeController
 
-routes.get('/likes/:postId', LikeController.list)
+routes.get('/likes/postId/:postId', LikeController.listPostId)
+routes.get('/likes/userId/:userId', LikeController.listUserId)
 routes.get('/likes/comments/:commentId', LikeController.listComments)
 routes.post('/likes/:postId/:commentId', LikeController.insertComments)
 routes.post('/likes/:postId', LikeController.insert)
