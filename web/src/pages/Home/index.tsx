@@ -25,9 +25,8 @@ const Home = () => {
   const [commentsData, setCommentsData] = useState<commentProps[]>([])
 
   const [content, setContent] = useState('')
-  const [contentUpdate, setContentUpdate] = useState('')
+  const [contentUpdate] = useState('')
   const [commentContent, setCommentContent] = useState('')
-  setContentUpdate('contentUpdateData')
 
   
   interface QuantProps {

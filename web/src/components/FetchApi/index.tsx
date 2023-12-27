@@ -27,7 +27,7 @@ interface QuantProps {
 // HOME
 
 
-export const handleLike = async (postId: string, userId: string | null, setQuantLikes: React.Dispatch<React.SetStateAction<QuantProps>>, setLikesData?: React.Dispatch<React.SetStateAction<postProps[]>> | undefined) => {
+export async function handleLike(postId: string, userId: string | null, setQuantLikes: React.Dispatch<React.SetStateAction<QuantProps>>, setLikesData?: React.Dispatch<React.SetStateAction<postProps[]>> | undefined) {
 
     try {
 
@@ -46,25 +46,25 @@ export const handleLike = async (postId: string, userId: string | null, setQuant
         setQuantLikes((accumulator) => ({
             ...accumulator,
             [postId]: updatedLikesCount,
-        }));
+        }))
 
         console.log('RESPONSE LIST POSTS', responseListPosts)
 
-        if(!setLikesData) return
+        if (!setLikesData) return
 
-        if(MethodPost.data.response.length === 0) {
+        if (MethodPost.data.response.length === 0) {
             setLikesData((accumulator) => accumulator.filter((data) => data.postId !== postId))
             return
-        }else {
+        } else {
             setLikesData((accumulator) => [
                 ...accumulator, responseListPosts
             ])
             return
         }
-        
+
 
     } catch (error) {
-        console.error(error);
+        console.error(error)
     }
 }
 

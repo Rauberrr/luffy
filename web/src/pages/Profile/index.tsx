@@ -24,8 +24,7 @@ const Profile = () => {
   const [likesData, setLikesData] = useState<postProps[]>([])
   const [commentsData, setCommentsData] = useState<commentProps[]>([])
 
-  const [contentUpdate, setContentUpdate] = useState('')
-  setContentUpdate('setContentUpdateData')
+  const [contentUpdate] = useState('')
 
 
   interface QuantProps {
@@ -38,9 +37,10 @@ const Profile = () => {
     commentId: string
   }
 
-  
+  const userId: string | null = localStorage.getItem('userId') as string
+
+
   const data = useCallback(async () => {
-    const userId = localStorage.getItem('userId')
     try {
 
       const responsePosts = await handlePostsUserId(userId)
@@ -56,6 +56,7 @@ const Profile = () => {
     } catch (error) {
       console.error(error)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -77,39 +78,39 @@ const Profile = () => {
   }
 
   
-    const [image, setImage] = useState(null);
+  //   const [image, setImage] = useState(null);
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
+  // const handleImageUpload = (event) => {
+  //   const file = event.target.files[0];
+  //   const reader = new FileReader();
 
-    console.log('FILE', file)
-    console.log('READER', reader)
+  //   console.log('FILE', file)
+  //   console.log('READER', reader)
 
 
-    reader.onloadend = async() => {
-      // Armazenar temporariamente a imagem no estado
-      setImage(reader.result);
+  //   reader.onloadend = async() => {
+  //     // Armazenar temporariamente a imagem no estado
+  //     setImage(reader.result);
       
-      const response = await axiosClient.put(`userId/img`, {
-        img: reader.result,
-        userId
-      })
+  //     const response = await axiosClient.put(`userId/img`, {
+  //       img: reader.result,
+  //       userId
+  //     })
 
-      console.log('RESPONSE IMG', response)
-      console.log('READER RESULT', reader.result)
+  //     console.log('RESPONSE IMG', response)
+  //     console.log('READER RESULT', reader.result)
 
-    };
+  //   };
 
-    if (file) {
-      reader.readAsDataURL(file);
+  //   if (file) {
+  //     reader.readAsDataURL(file);
 
-    }
-  };
+  //   }
+  // };
   
 
 
-  const Datas = ({ data, likesOrLuffies }: { data: postProps[], likesOrLuffies: boolean, setLikesOrLuffies: React.Dispatch<SetStateAction<boolean>> }) => {
+  const Datas = ({ data, likesOrLuffies }: { data: postProps[], likesOrLuffies: boolean}) => {
 
     const [commentContent, setCommentContent] = useState('')
 
@@ -292,8 +293,6 @@ const Profile = () => {
     <>
     <DivProfile>
       <div className='img'>
-          <input type="file" onChange={handleImageUpload} />
-          {image && <img src={image} alt="Uploaded" style={{ maxWidth: '300px' }} />}
         <ImgProfile src='https://www.hubspot.com/hs-fs/hubfs/media/fotodeperfil.jpeg?width=610&height=406&name=fotodeperfil.jpeg' />
         <p> Edit Profile </p>
       </div>
