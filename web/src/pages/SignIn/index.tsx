@@ -27,8 +27,8 @@ const SignIn = () => {
           password
         })
 
-        console.log(response.data)
-
+        console.log(response.data.response)
+        navigate('/login')
       } catch (error) {
         console.error(error)
       }

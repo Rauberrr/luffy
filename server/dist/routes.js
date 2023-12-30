@@ -11,7 +11,7 @@ const CommentController_1 = __importDefault(require("./Controllers/CommentContro
 const UserController_1 = __importDefault(require("./Controllers/UserController"));
 const LikeController_1 = __importDefault(require("./Controllers/LikeController"));
 const routes = (0, express_1.Router)();
-// UserController
+// UserControllers
 routes.post('/create-user', UserController_1.default.create);
 routes.post('/login-user', UserController_1.default.login);
 routes.put('/userId/img', UserController_1.default.uploadImg);

@@ -9,6 +9,7 @@ import leaf2 from '../../assets/img/leaf-2.png'
 import { useCallback, useEffect, useState } from "react"
 import axiosClient from "../../api/api"
 import { handleComment, handleDelete, handleDeleteComment, handleEdit, handleEditComment, handleLike, handleLikeComment, handlePost, handleViewComments } from "../../components/FetchApi"
+import { handleUrl } from "../../components/urlImages"
 
 
 const Home = () => {
@@ -40,12 +41,16 @@ const Home = () => {
   }
 
   const userId = localStorage.getItem('userId')
+  const userName = localStorage.getItem('userName')
+  const userImage: string | undefined = localStorage.getItem('userImage') ?? undefined
 
   const data = useCallback(async() => {
     try {
+
       const responsePosts = await axiosClient.get('posts')
 
       setPostsData(responsePosts.data.response)
+
 
       const LikesCountData = await Promise.all(
         responsePosts.data.response.map(async(data: postProps) => {
@@ -96,9 +101,20 @@ const Home = () => {
 
 
   interface postProps {
+    name: string
     postId: string,
     userId: string,
-    content: string
+    content: string,
+    img?: {
+      fieldname: string
+      originalname: string
+      encoding: string
+      mimetype: string
+      destination: string
+      filename: string
+      path: string
+      size: number
+    }
   }
 
   interface commentProps {
@@ -106,6 +122,17 @@ const Home = () => {
     userId: string
     commentId: string
     comment: string
+    name: string
+    img?: {
+      fieldname: string
+      originalname: string
+      encoding: string
+      mimetype: string
+      destination: string
+      filename: string
+      path: string
+      size: number
+    }
   }
 
   
@@ -116,8 +143,8 @@ const Home = () => {
       <DivPost key={post.postId}>
         <div>
           <DivImgTitle>
-            <Img src="https://www.hubspot.com/hs-fs/hubfs/media/fotodeperfil.jpeg?width=610&height=406&name=fotodeperfil.jpeg" alt="Profile" />
-            <H2> Opa </H2>
+              <Img src={handleUrl(post.img?.filename)} alt="Profile" />
+            <H2> {post.name} </H2>
           </DivImgTitle>
             <P> {post.content} </P>
             <DivIcons>
@@ -145,10 +172,12 @@ const Home = () => {
                 
                   {menu[post.postId] && (
                     <div>
-                      <Ul>
+                      { post.userId === userId && (
+                        <Ul>
                         <li onClick={() => handleEdit(post.postId, contentUpdate)}>Edit</li>
                         <li onClick={() => handleDelete(post.postId, setPostsData)}>Delete</li>
                       </Ul>
+                        ) }
                     </div>
                   )}
                   <ImgIcons
@@ -156,7 +185,6 @@ const Home = () => {
                     alt="icon"
                     onClick={() => 
                       setMenu((accumulator) => ({
-                        // ...accumulator,
                         [post.postId]: !accumulator[post.postId], 
                       }))
                     }
@@ -173,13 +201,13 @@ const Home = () => {
                 <div className="comments">
 
                 <DivImgTitle>
-                    <Img width={'2vw'} height={'2vw'} style={{ borderRadius: '1vw' }} src="https://upload.wikimedia.org/wikipedia/commons/4/43/Foto_Perfil.jpg" alt="Profile" />
-                  <H2> User </H2>
+                    <Img width={'2vw'} height={'2vw'} style={{ borderRadius: '1vw' }} src={userImage} alt="Profile" />
+                  <H2> {post.name} </H2>
                 </DivImgTitle>
                 <Input color="white" width="50vw" height="10vw" value={commentContent} onChange={(e) => setCommentContent(e.target.value)} placeholder="Write you comment here." /> 
                 <div className="buttons-comment">
                   <Button color="white" background="#129FCC" onClick={(e) =>  {
-                    handleComment(post.postId, e, commentContent, userId, setQuantComments, setCommentsData, setCommentContent)
+                    handleComment(post.postId, e, userName, commentContent, userId, setQuantComments, setCommentsData, setCommentContent)
                     setCommentContent('')
                   }
                   }
@@ -189,8 +217,8 @@ const Home = () => {
                 {commentsData.map((comment: commentProps) => (
                   <DivComment key={comment.commentId}>
                     <DivImgTitle>
-                      <Img width={'30px'} height={'30px'} src="https://www.hubspot.com/hs-fs/hubfs/media/fotodeperfil.jpeg?width=610&height=406&name=fotodeperfil.jpeg" alt="Profile" />
-                      <H2> Opa </H2>
+                      <Img width={'30px'} height={'30px'} src={handleUrl(comment.img?.filename)} alt="Profile" />
+                      <H2> {comment.name} </H2>
                     </DivImgTitle>
                     <P> {comment.comment} </P>
                     <DivIcons>
@@ -208,10 +236,12 @@ const Home = () => {
 
                         {menu[comment.commentId] && (
                           <div>
+                            {comment.userId === userId && (
                             <Ul>
                               <li onClick={() => handleEditComment(comment.commentId)}>Edit</li>
                               <li onClick={() => handleDeleteComment(post.postId, comment.commentId, setCommentsData, setQuantComments)}>Delete</li>
                             </Ul>
+                            )}
                           </div>
                         )}
                         <ImgIcons
@@ -245,13 +275,13 @@ const Home = () => {
       { popup && <>
         <DivPopup>
           <div>
-            <Img width={'30px'} height={'30px'} src="https://www.hubspot.com/hs-fs/hubfs/media/fotodeperfil.jpeg?width=610&height=406&name=fotodeperfil.jpeg" /> 
+            <Img width={'30px'} height={'30px'} src={userImage} /> 
             <Input placeholder="Write whatever you want!" value={content} onChange={(e) => setContent(e.target.value)} />
           </div>
 
           <DivButtons>
             <Button > Save Draft </Button>
-            <Button background="#129FCC" onClick={(e) => handlePost(e, userId, content, setPostsData, setPopup, setContent)} > Post Now </Button>
+            <Button background="#129FCC" onClick={(e) => handlePost(e, userId, userName, content, setPostsData, setPopup, setContent)} > Post Now </Button>
           </DivButtons>
         </DivPopup>
 

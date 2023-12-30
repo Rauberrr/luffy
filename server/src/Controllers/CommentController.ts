@@ -3,6 +3,18 @@ import Comment from '../Schema/Comment'
 import Posts from '../Schema/Post'
 
 class CommentController {
+  public async listall (req: Request, res: Response): Promise<Response> {
+    try {
+      const response = await Comment.findAll()
+
+      console.log(response)
+      return res.status(200).json({ msg: 'sucessfully', response })
+    } catch (error) {
+      console.error(error)
+      return res.status(401).json({ erro: 'Error', error })
+    }
+  }
+
   public async list (req: Request, res: Response): Promise<Response> {
     const { postId } = req.params
 
@@ -18,7 +30,7 @@ class CommentController {
   }
 
   public async insert (req: Request, res: Response): Promise<Response> {
-    const { userId, comment } = req.body
+    const { userId, name, comment } = req.body
     const { postId } = req.params
 
     const findIdPost = await Posts.findByPk(postId)
@@ -31,6 +43,7 @@ class CommentController {
       const response = await Comment.create({
         postId,
         userId,
+        name,
         comment
       })
 
@@ -44,7 +57,7 @@ class CommentController {
   }
 
   public async update (req: Request, res: Response): Promise<Response> {
-    const { userId, comment } = req.body
+    const { userId, name, comment } = req.body
     const { postId, commentId } = req.params
 
     const findIdPost = await Posts.findByPk(postId)
@@ -57,6 +70,7 @@ class CommentController {
       await Comment.update({
         postId,
         userId,
+        name,
         comment
       }, { where: { commentId } })
 

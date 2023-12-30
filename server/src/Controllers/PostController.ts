@@ -3,6 +3,7 @@ import Posts from '../Schema/Post'
 import Comment from '../Schema/Comment'
 import Like from '../Schema/Like'
 import { type Model } from 'sequelize'
+import User from '../Schema/User'
 
 class PostController {
   public async list (req: Request, res: Response): Promise<Response> {
@@ -63,15 +64,23 @@ class PostController {
   }
 
   public async create (req: Request, res: Response): Promise<Response> {
-    const { userId, content } = req.body
+    const { userId, name, content } = req.body
     // const { user, comment } = req.body.comments
 
     try {
       console.log(userId, content)
 
+      const user = await User.findByPk(userId)
+
+      if (user == null) {
+        return res.status(404).json({ message: 'Usuário não encontrado' })
+      }
+
       const response = await Posts.create({
         userId,
-        content
+        name,
+        content,
+        img: user.img
       })
 
       console.log(JSON.stringify(response.toJSON(), null, 2))
@@ -83,12 +92,13 @@ class PostController {
   }
 
   public async update (req: Request, res: Response): Promise<Response> {
-    const { userId, content } = req.body
+    const { userId, name, content } = req.body
     const { postId } = req.params
 
     try {
       await Posts.update({
         userId,
+        name,
         content
       }, { where: { postId } })
 

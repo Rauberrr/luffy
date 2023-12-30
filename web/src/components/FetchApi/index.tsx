@@ -12,9 +12,21 @@ interface commentProps {
     userId: string
     commentId: string
     comment: string
+    name: string
+    img?: {
+        fieldname: string
+        originalname: string
+        encoding: string
+        mimetype: string
+        destination: string
+        filename: string
+        path: string
+        size: number
+    }
 }
 
 interface postProps {
+    name: string,
     postId: string,
     userId: string,
     content: string
@@ -68,15 +80,16 @@ export async function handleLike(postId: string, userId: string | null, setQuant
     }
 }
 
-export const handlePost = async (e: React.MouseEvent, userId: string | null, content: string, setPostsData: React.Dispatch<SetStateAction<postProps[]>>, setPopup: React.Dispatch<SetStateAction<boolean>>, setContent: React.Dispatch<SetStateAction<string>>) => {
+export const handlePost = async (e: React.MouseEvent, userId: string | null, name: string | null , content: string, setPostsData: React.Dispatch<SetStateAction<postProps[]>>, setPopup: React.Dispatch<SetStateAction<boolean>>, setContent: React.Dispatch<SetStateAction<string>>) => {
     e.preventDefault()
 
     try {
 
-        console.log(userId, content)
+        console.log(userId, name, content)
 
         const response = await axiosClient.post('post', {
             userId,
+            name,
             content,
         })
 
@@ -126,16 +139,18 @@ export const handleDelete = async (postId: string, setPostsData?: React.Dispatch
 
 // Comments
 
-export const handleComment = async (postId: string, e: React.MouseEvent, commentContent: string, userId: string | null, setQuantComments: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>, setCommentsData: React.Dispatch<React.SetStateAction<commentProps[]>>, setCommentContent: React.Dispatch<React.SetStateAction<string>>) => {
+export const handleComment = async (postId: string, e: React.MouseEvent, name: string | null , commentContent: string, userId: string | null, setQuantComments: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>, setCommentsData: React.Dispatch<React.SetStateAction<commentProps[]>>, setCommentContent: React.Dispatch<React.SetStateAction<string>>) => {
     e.preventDefault()
 
     console.log(commentContent)
+    console.log(name)
 
     try {
 
 
         const response = await axiosClient.post(`comments/${postId}`, {
             userId,
+            name,
             comment: commentContent
         })
 
@@ -169,6 +184,7 @@ export const handleViewComments = async (postId: string, setCommentsData: React.
         const response = await axiosClient.get(`comments/${postId}`)
 
         console.log(response.data.response)
+        
         setCommentsData(response.data.response)
 
         const LikesCommentData = await Promise.all(

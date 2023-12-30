@@ -15,17 +15,28 @@ const Login = () => {
       e.preventDefault()
         try {
 
+          localStorage.removeItem('userId')
+          localStorage.removeItem('userId')
+          localStorage.removeItem('userId')
+
           const response = await axiosClient.post('/login-user', {
             email: username,
             password,
           })
           
-          console.log(response.data)
+          console.log(response.data.response)
+
+          const url = `http://localhost:3000/images/${response.data.response.img}`
+
           
           localStorage.setItem('userId', response.data.response.userId)
-
-          console.log(response.data.response.userId)
+          localStorage.setItem('userImage', url)
+          localStorage.setItem('userName', response.data.response.name)
+          console.log('userId', response.data.response.userId)
+          console.log('userImage', url)
+          console.log('userName',response.data.response.name)
           navigate('/')
+          window.location.reload()
         } catch (error) {
           console.error(error)
         }

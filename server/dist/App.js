@@ -8,6 +8,9 @@ const cors_1 = __importDefault(require("cors"));
 const routes_1 = __importDefault(require("./routes"));
 const database_1 = __importDefault(require("./config/database"));
 const body_parser_1 = __importDefault(require("body-parser"));
+const User_1 = __importDefault(require("./Schema/User"));
+const Like_1 = __importDefault(require("./Schema/Like"));
+const Comment_1 = __importDefault(require("./Schema/Comment"));
 class App {
     constructor() {
         this.app = (0, express_1.default)();
@@ -32,7 +35,13 @@ class App {
     }
     async db() {
         try {
-            await database_1.default.sync();
+            const response = Promise.all([
+                await database_1.default.sync({ force: true }),
+                await User_1.default.sync({ force: true }),
+                await Like_1.default.sync({ force: true }),
+                await Comment_1.default.sync({ force: true })
+            ]);
+            console.log(response);
             console.log('Modelos sincronizados com o banco de dados.');
         }
         catch (error) {

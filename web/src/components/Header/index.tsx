@@ -6,6 +6,7 @@ import { Ul } from "../../pages/Home/style"
 const Header = () => {
 
     const [menu, setMenu] = useState(false)
+    const userImage: string | null = localStorage.getItem('userImage') as string
 
 
   return (
@@ -21,7 +22,7 @@ const Header = () => {
                 <li> Others </li>
             </Ul>
             )}
-            <Img onClick={() => setMenu(!menu)} src="https://www.hubspot.com/hs-fs/hubfs/media/fotodeperfil.jpeg?width=610&height=406&name=fotodeperfil.jpeg" alt="Profile" />
+            <Img onClick={() => setMenu(!menu)} src={userImage} alt="Profile" />
         </div>
         
     </HeaderDiv>

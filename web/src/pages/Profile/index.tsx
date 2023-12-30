@@ -9,6 +9,7 @@ import axiosClient from '../../api/api'
 import { useCallback, useEffect, useState } from 'react'
 import { handleComment, handleDelete, handleDeleteComment, handleEdit, handleEditComment, handleLike, handleLikeComment, handleLikesUserId, handlePostsUserId, handleViewComments } from '../../components/FetchApi'
 import { Button, DivComment, DivIcons, DivImgTitle, DivPost, H2, ImgIcons, Input, P, Ul } from '../Home/style'
+import { handleUrl } from '../../components/urlImages'
 
 const Profile = () => {
   const [menu, setMenu] = useState<{ [keyId: string]: boolean }>({});
@@ -38,6 +39,8 @@ const Profile = () => {
   }
 
   const userId: string | null = localStorage.getItem('userId') as string
+  const userImage: string | null = localStorage.getItem('userImage') as string
+  const userName = localStorage.getItem('userName')
 
 
   const data = useCallback(async () => {
@@ -65,16 +68,38 @@ const Profile = () => {
 
 
   interface postProps {
+    name: string,
     postId: string,
     userId: string,
-    content: string
+    content: string,
+    img?: {
+      fieldname: string
+      originalname: string
+      encoding: string
+      mimetype: string
+      destination: string
+      filename: string
+      path: string
+      size: number
+    }
   }
 
   interface commentProps {
+    name: string
     postId: string
     userId: string
     commentId: string
     comment: string
+    img?: {
+      fieldname: string
+      originalname: string
+      encoding: string
+      mimetype: string
+      destination: string
+      filename: string
+      path: string
+      size: number
+    }
   }
 
   
@@ -107,7 +132,51 @@ const Profile = () => {
 
   //   }
   // };
-  
+
+
+
+  interface ImageUploadProps {
+    userId: string
+  }
+
+  const ImageUpload: React.FC<ImageUploadProps>  = ({ userId }) => {
+    const [image, setImage] = useState<File | null>(null)
+
+    const handleImage = async(e: React.ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault()
+      const formData = new FormData()
+      formData.append('file', image)
+
+      const headers = {
+        'headers': {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+
+      await axiosClient.post(`img/${userId}`, formData, headers)
+      .then((response) => {
+        console.log(response.data.filename)
+
+        const url = `http://localhost:3000/images/${response.data.filename}`
+
+        localStorage.setItem('userImage', url)
+        window.location.reload()
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+
+    }
+    
+
+    return (
+      <div>
+        <input type="file" name='file' onChange={(e) => setImage(e.target.files[0])} />
+        <button onClick={handleImage}>Enviar Imagem</button>
+      </div>
+    )
+  }
+
 
 
   const Datas = ({ data, likesOrLuffies }: { data: postProps[], likesOrLuffies: boolean}) => {
@@ -120,10 +189,8 @@ const Profile = () => {
           <DivPost key={post.postId}>
             <div>
               <DivImgTitle>
-              
-             
-                <Img src="https://www.hubspot.com/hs-fs/hubfs/media/fotodeperfil.jpeg?width=610&height=406&name=fotodeperfil.jpeg" alt="Profile" />
-                <H2> Opa </H2>
+                <Img src={handleUrl(post.img?.filename)} alt="Profile" />
+                <H2> {post.name} </H2>
               </DivImgTitle>
               <P> {post.content} </P>
               <DivIcons>
@@ -147,16 +214,20 @@ const Profile = () => {
                     }
                     }
                   />
+                {likesOrLuffies === false && (
                   <p> {QuantComments[post.postId] || 0} </p>
+                )}
                 </div>
                 <div>
 
                   {menu[post.postId] && (
                     <div>
+                    {post.userId === userId && (
                       <Ul>
                         <li onClick={() => handleEdit(post.postId, contentUpdate)}>Edit</li>
                         <li onClick={() => handleDelete(post.postId)}>Delete</li>
                       </Ul>
+                    )}
                     </div>
                   )}
                   <ImgIcons
@@ -181,19 +252,19 @@ const Profile = () => {
                   <div className="comments">
 
                     <DivImgTitle>
-                      <Img width={'2vw'} height={'2vw'} style={{ borderRadius: '1vw' }} src="https://upload.wikimedia.org/wikipedia/commons/4/43/Foto_Perfil.jpg" alt="Profile" />
-                      <H2> User </H2>
+                      <Img width={'2vw'} height={'2vw'} style={{ borderRadius: '1vw' }} src={userImage} alt="Profile" />
+                      <H2> {userName} </H2>
                     </DivImgTitle>
                   <Input color="white" width="50vw" height="10vw" onChange={(e) => setCommentContent(e.target.value)} placeholder="Write you comment here." />
                     <div className="buttons-comment">
-                      <Button color="white" background="#129FCC" onClick={(e) => handleComment(post.postId, e, commentContent, userId, setQuantComments, setCommentsData, setCommentContent)}> Comment </Button>
+                      <Button color="white" background="#129FCC" onClick={(e) => handleComment(post.postId, e, userName ,commentContent, userId, setQuantComments, setCommentsData, setCommentContent)}> Comment </Button>
                     </div>
                   </div>
                   {commentsData.map((comment: commentProps) => (
                     <DivComment key={comment.commentId}>
                       <DivImgTitle>
-                        <Img width={'30px'} height={'30px'} src="https://www.hubspot.com/hs-fs/hubfs/media/fotodeperfil.jpeg?width=610&height=406&name=fotodeperfil.jpeg" alt="Profile" />
-                        <H2> Opa </H2>
+                        <Img width={'30px'} height={'30px'} src={userImage} alt="Profile" />
+                        <H2> {comment.name} </H2>
                       </DivImgTitle>
                       <P> {comment.comment} </P>
                       <DivIcons>
@@ -213,10 +284,13 @@ const Profile = () => {
 
                           {menu[comment.commentId] && (
                             <div>
-                              <Ul>
+
+                              {comment.userId === userId && (
+                                <Ul>
                                 <li onClick={() => handleEditComment(comment.commentId)}>Edit</li>
                                 <li onClick={() => handleDeleteComment(post.postId, comment.commentId, setCommentsData, setQuantComments)}>Delete</li>
                               </Ul>
+                              )}
                             </div>
                           )}
                           <ImgIcons
@@ -253,7 +327,6 @@ const Profile = () => {
     const LikesCountData = await Promise.all(
       postsData.map(async (data: postProps) => {
         try {
-
           const response = await axiosClient.get(`likes/postId/${data.postId}`)
           const responseData = response.data.response.filter((likes: likesProps) => likes.commentId === null && likes.userId === data.userId)
           return { postId: data.postId, likesCount: responseData.length }
@@ -289,15 +362,17 @@ const Profile = () => {
     setQuantComments(CommentsCountDataMap)
   }
 
+  
   return (
     <>
     <DivProfile>
       <div className='img'>
-        <ImgProfile src='https://www.hubspot.com/hs-fs/hubfs/media/fotodeperfil.jpeg?width=610&height=406&name=fotodeperfil.jpeg' />
+        <ImageUpload userId={userId} />
+        <ImgProfile src={userImage} />
         <p> Edit Profile </p>
       </div>
       <div className='texts'>
-        <H1Profile> James </H1Profile>
+        <H1Profile> {userName} </H1Profile>
         <PProfile> Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ullam, odio quis explicabo fuga debitis mollitia totam beatae tempore dolores officia ducimus, aliquid natus, vel alias? Totam eos quis vero quo! </PProfile>
       </div>
     </DivProfile>

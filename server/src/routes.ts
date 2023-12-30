@@ -5,14 +5,20 @@ import PostController from './Controllers/PostController'
 import CommentController from './Controllers/CommentController'
 import UserController from './Controllers/UserController'
 import LikeController from './Controllers/LikeController'
+import multer from 'multer'
+import { storage } from './config/multer'
 
 const routes = Router()
+const upload = multer({ storage })
 
 // UserControllers
 
+routes.post('/img/:userId', upload.single('file'), UserController.uploadImg)
+// routes.get('/img/:userId', UserController.listImage)
+
 routes.post('/create-user', UserController.create)
 routes.post('/login-user', UserController.login)
-routes.put('/userId/img', UserController.uploadImg)
+routes.get('/listUsers', UserController.listUsers)
 
 // PostController
 
@@ -25,7 +31,7 @@ routes.put('/post/:postId', PostController.update)
 routes.delete('/post/:postId', PostController.delete)
 
 // CommentController
-
+routes.get('/comments/', CommentController.listall)
 routes.get('/comments/:postId', CommentController.list)
 routes.post('/comments/:postId', CommentController.insert)
 routes.put('/comments/:postId/:commentId', CommentController.update)

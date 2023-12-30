@@ -2,14 +2,15 @@
     "version": 2,
     "builds": [
         {
-            "src": "./server/dist/server.ts",
-            "use": "@vercel/node"
+            "src": "./dist/server.ts",
+            "use": "@now/node"
         }
     ],
-    "routes": [
+    "rewrites": [
         {
-            "src": "(.*)",
-            "dest": "/server/dist/server.ts"
+            "source": "/(.*)",
+            "destination": "/"
         }
-    ]
+    ],
+    "public": "dist"
 }

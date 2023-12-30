@@ -1,11 +1,47 @@
 import { type Request, type Response } from 'express'
 import User from '../Schema/User'
 import { Op } from 'sequelize'
+
 import UserService from '../Services/UserService'
+import Posts from '../Schema/Post'
+import Comment from '../Schema/Comment'
+
+// interface userProps {
+//   userId: string
+//   name: string
+//   email: string
+//   password: string
+//   img: string
+// }
 
 const userService = new UserService()
 
 class UserController {
+  public async listUsers (req: Request, res: Response): Promise<Response> {
+    const response = await User.findAll()
+
+    console.log(response)
+
+    return res.status(200).json({ msg: 'sucesso', response })
+  }
+
+  // public async listImage (req: Request, res: Response): Promise<Response> {
+  //   try {
+  //     const { userId } = req.body
+
+  //     const user = await User.findByPk(userId)
+
+  //     if (user == null) {
+  //       return res.status(404).json({ message: 'Usuário não encontrado' })
+  //     }
+
+  //     return res.status(200).json({ msg: 'Sucessfully', response: userImage })
+  //   } catch (error) {
+  //     console.error(error)
+  //     return res.status(500).json({ msg: 'Error', error })
+  //   }
+  // }
+
   public async create (req: Request, res: Response): Promise<Response> {
     const { name, email, password } = req.body
 
@@ -36,23 +72,59 @@ class UserController {
   }
 
   public async uploadImg (req: Request, res: Response): Promise<Response> {
-    const { img, userId } = req.body
+    const file = req.file
+
+    console.log('FILEEE', file)
+
+    if (file == null) {
+      return res.status(400).json({ message: 'Nenhum arquivo enviado' })
+    }
 
     try {
-      await User.update({
-        img
-      }, { where: { userId } })
+      const { userId } = req.params
 
-      const response = await User.findOne({ where: { userId } })
+      console.log(userId)
 
-      if (response === null) {
-        return res.status(401).json({ mgs: 'user nao encontrado' })
+      const user = await User.findByPk(userId)
+      const postsImage = await Posts.findAll({ where: { userId } })
+      const commentsImage = await Comment.findAll({ where: { userId } })
+
+      if (user == null) {
+        return res.status(404).json({ message: 'Usuário não encontrado' })
       }
 
-      return res.status(200).json({ msg: 'sucessfully', response })
+      const PostsSaved = postsImage.map(async (post) => {
+        post.img = file
+        await post.save()
+      })
+
+      const CommentsSaved = commentsImage.map(async (comment) => {
+        comment.img = file
+        await comment.save()
+      })
+
+      await Promise.all([...PostsSaved, ...CommentsSaved])
+
+      user.img = file
+
+      // for (const post of postsImage) {
+      //   post.img = file
+      //   await post.save()
+      // }
+
+      // for (const comment of commentsImage) {
+      //   comment.img = file
+      //   await comment.save()
+      // }
+
+      await user.save()
+
+      console.log(user)
+
+      return res.status(200).json({ msg: 'Imagem atualizada com sucesso', filename: file.filename })
     } catch (error) {
       console.error(error)
-      return res.status(401).json({ error })
+      return res.status(500).json({ error: 'Erro ao fazer upload da imagem' })
     }
   }
 

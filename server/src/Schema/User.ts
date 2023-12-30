@@ -1,8 +1,25 @@
-import { DataTypes } from 'sequelize'
+import { DataTypes, type Model } from 'sequelize'
 import sequelize from '../config/database'
 import { v4 as uuidv4 } from 'uuid'
 
-const User = sequelize.define('user', {
+interface userProps extends Model {
+  userId: string
+  name: string
+  email: string
+  password: string
+  img?: {
+    fieldname: string
+    originalname: string
+    encoding: string
+    mimetype: string
+    destination: string
+    filename: string
+    path: string
+    size: number
+  }
+}
+
+const User = sequelize.define<userProps>('user', {
   userId: {
     type: DataTypes.UUID,
     defaultValue: () => uuidv4(),
@@ -25,7 +42,7 @@ const User = sequelize.define('user', {
 
   },
   img: {
-    type: DataTypes.BLOB('long')
+    type: DataTypes.JSONB
   }
 })
 
